@@ -1,0 +1,65 @@
+{
+  "manifest_version": 2,
+  "name": "Scrolly",
+  "version": "1.0",
+  "author": "Saverio Morelli (Sav22999)",
+  "description": "Remember the scroll position of each webpages",
+  "icons": {
+    "16": "./img/icon-16.png",
+    "24": "./img/icon-24.png",
+    "48": "./img/icon-48.png",
+    "96": "./img/icon-96.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "scrolly@saveriomorelli.com"
+    }
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": {
+      "16": "./img/icon-16.png",
+      "24": "./img/icon-24.png",
+      "48": "./img/icon-48.png",
+      "96": "./img/icon-96.png"
+    },
+    "theme_icons": [
+      {
+        "dark": "./img/icon-16.png",
+        "light": "./img/icon-16.png",
+        "size": 16
+      },
+      {
+        "dark": "./img/icon-24.png",
+        "light": "./img/icon-24.png",
+        "size": 24
+      },
+      {
+        "dark": "./img/icon-48.png",
+        "light": "./img/icon-48.png",
+        "size": 48
+      },
+      {
+        "dark": "./img/icon-96.png",
+        "light": "./img/icon-96.png",
+        "size": 96
+      }
+    ],
+    "default_title": "Scrolly",
+    "default_popup": "./popup.html"
+  },
+  "background": {
+    "scripts": [
+      "./js/background.js"
+    ],
+    "persistent": true
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "notifications",
+    "activeTab",
+    "<all_urls>"
+  ]
+}
