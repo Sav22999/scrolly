@@ -9,6 +9,8 @@ var changedTab = false;
 
 var minimized = false;
 
+var unsupported_injection_websites = ["addons.mozilla.org"];
+
 var activeTabId;
 
 const linkReview = ["https://addons.mozilla.org/firefox/addon/scrolly/"]; //{firefox add-ons}
@@ -252,7 +254,38 @@ function isUrlSupported(url) {
             //this disable all unsupported website
             valueToReturn = false;//TODO | true->for testing, false->stable release
     }
+
+
+    //disable also for unsupported (injection) websites
+    if (unsupported_injection_websites.includes(getShortUrl(url))) valueToReturn = false;
+
     return valueToReturn;
+}
+
+function getShortUrl(url) {
+    let urlToReturn = url;
+    let urlParts, urlPartsTemp;
+
+    if (url.includes(":")) {
+        urlParts = url.split(":");
+        urlToReturn = urlParts[1];
+    }
+
+    if (urlToReturn.includes("/")) {
+        urlPartsTemp = urlToReturn.split("/");
+        if (urlPartsTemp[0] === "" && urlPartsTemp[1] === "") {
+            urlToReturn = urlPartsTemp[2];
+        }
+    }
+
+    if (urlToReturn.includes(".")) {
+        urlPartsTemp = urlToReturn.split(".");
+        if (urlPartsTemp[0] === "www") {
+            urlToReturn = urlToReturn.substr(4);
+        }
+    }
+
+    return urlToReturn;
 }
 
 function getToday() {

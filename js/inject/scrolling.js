@@ -34,23 +34,23 @@ function load() {
 function scrollX(x) {
     window.scrollTo(x, window.scrollY);
     //console.log("Scrolling X - Attempt #" + attemptsX);
-    if (window.scrollX !== x && attemptsX <= MAX_ATTEMPTS) {
+    /*if (window.scrollX !== x && attemptsX <= MAX_ATTEMPTS) {
         setTimeout(function () {
             scrollX(x);
             attemptsX++;
         }, 500 * attemptsX);
-    }
+    }*/
 }
 
 function scrollY(y) {
     window.scrollTo(window.scrollX, y);
     //console.log("Scrolling Y - Attempt #" + attemptsY);
-    if (window.scrollY !== y && attemptsY <= MAX_ATTEMPTS) {
+    /*if (window.scrollY !== y && attemptsY <= MAX_ATTEMPTS) {
         setTimeout(function () {
             scrollY(y);
             attemptsY++;
         }, 500 * attemptsY);
-    }
+    }*/
 }
 
 //INJECTION – END || Scrolly add-on
