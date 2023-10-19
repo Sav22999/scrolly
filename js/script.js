@@ -134,22 +134,24 @@ function getPage(url) {
     return urlToReturn;
 }
 
-function getShortUrl(url) {
+function getShortUrl(url, setUi = true) {
+
     let urlToReturn = url;
     let urlParts, urlPartsTemp;
 
     if (url.includes(":")) {
         urlParts = url.split(":");
         urlToReturn = urlParts[1];
-        if (isUrlSupported(url)) {
-            disableSwitch(false);
-        } else {
-            switchToOff("toggle-thumb");
-            disableSwitch(true);
-            return "This URL is not supported";
+        if (setUi) {
+            if (isUrlSupported(url)) {
+                disableSwitch(false);
+            } else {
+                switchToOff("toggle-thumb");
+                disableSwitch(true);
+                return "This URL is not supported";
+            }
         }
     }
-
     if (urlToReturn.includes("/")) {
         urlPartsTemp = urlToReturn.split("/");
         if (urlPartsTemp[0] === "" && urlPartsTemp[1] === "") {
@@ -244,9 +246,10 @@ function isUrlSupported(url) {
             valueToReturn = false;//TODO | true->for testing, false->stable release
     }
 
-
     //disable also for unsupported (injection) websites
-    if (unsupported_injection_websites.includes(getShortUrl(url))) valueToReturn = false;
+    if (unsupported_injection_websites.includes(getShortUrl(url, false))) valueToReturn = false;
+
+    return valueToReturn;
 }
 
 function isInteger(value) {
