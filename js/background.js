@@ -77,19 +77,26 @@ function tabUpdated() {
         fullUrl = activeTabUrl;
         getSavedData(activeTabUrl);
 
-        if (all_tabs[activeTabId] === undefined || all_tabs[activeTabId] !== undefined && all_tabs[activeTabId] !== activeTabUrl) {
-            all_tabs[activeTabId] = activeTabUrl;
-            //console.log("Not injected yet!")
-            //injection
-            browser.tabs.executeScript(activeTab.id, {file: "./js/inject/scrolling.js"}).then(function () {
-                //console.log("Injection successful");
-            }).catch(function (error) {
-                console.error("Error injection: " + error);
-            });
-        } else {
-            //console.log("Already injected!")
-        }
-        //console.log(JSON.stringify(all_tabs));
+        browser.storage.local.get("websites", function (value) {
+            if (value["websites"] !== undefined) {
+                websites_json = value["websites"];
+                if (websites_json[getPage(activeTabUrl)] !== undefined && websites_json[getPage(activeTabUrl)]["enabled"]) {
+                    if (all_tabs[activeTabId] === undefined || all_tabs[activeTabId] !== undefined && all_tabs[activeTabId] !== activeTabUrl) {
+                        all_tabs[activeTabId] = activeTabUrl;
+                        //console.log("Not injected yet!")
+                        //injection
+                        browser.tabs.executeScript(activeTab.id, {file: "./js/inject/scrolling.js"}).then(function () {
+                            //console.log("Injection successful");
+                        }).catch(function (error) {
+                            console.error("E1: Error injection: " + error);
+                        });
+                    } else {
+                        //console.log("Already injected!")
+                    }
+                    //console.log(JSON.stringify(all_tabs));
+                }
+            }
+        });
     });
 
     browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -138,12 +145,138 @@ function getPage(url) {
     //https://page.example/search?parameters
     if (url.includes("?")) urlToReturn = urlToReturn.split("?")[0];
 
-    //console.log(urlToReturn);
+    let accepted_parameters = ["q", "search", "filter", "p", "age", "query", "i", "text"]; //all parameters accepted (usually "q" is the key to search)
+    let required_parameters = {}; //keys have to be contained also in accepted_parameters
+
+    let top_level_domain = "";
+    let second_level_domain = "";
+    let other_levels = [];
+
+    let domain_levels = getDomain(url, false).split(".");
+    if (domain_levels.length > 1) {
+        top_level_domain = domain_levels[domain_levels.length - 1];
+        second_level_domain = domain_levels[domain_levels.length - 2];
+        if (domain_levels.length > 2) {
+            for (let level = domain_levels.length - 3; level >= 0; level--) {
+                //console.log(domain_levels[level]);
+                if (domain_levels[level] !== "www") other_levels.push(domain_levels[level]);
+            }
+        }
+        //console.log(`${second_level_domain}.${top_level_domain}`);
+        //console.log(other_levels);
+    }
+
+    let url_without_protocol = urlToReturn.replaceAll(getTheProtocol(url) + "://", "");
+
+    let url_google_type = `www.google.${top_level_domain}/search`; //www.google.*/search
+    let url_wikimedia_type = [];
+    if (other_levels.length > 0) {
+        url_wikimedia_type.push(`${other_levels[0]}.wikipedia.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wiktionary.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikinews.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikiquote.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikiversity.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikibooks.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikisource.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikivoyage.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikimedia.org/w/index.php`);
+        url_wikimedia_type.push(`${other_levels[0]}.mediawiki.org/w/index.php`);
+
+        url_wikimedia_type.push(`${other_levels[0]}.wikipedia.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wiktionary.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikinews.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikiquote.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikiversity.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikibooks.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikisource.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikivoyage.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.wikimedia.org/wiki/Special:Search`);
+        url_wikimedia_type.push(`${other_levels[0]}.mediawiki.org/wiki/Special:Search`);
+    }
+
+    let url_yahoo_type = "";
+    if (other_levels.length > 0) {
+        url_yahoo_type = `yahoo.com/search`;
+        for (let level = 0; level < other_levels.length; level++) {
+            url_yahoo_type = other_levels[level] + "." + url_yahoo_type;
+        }
+    }
+
+    if (url_without_protocol === "www.bing.com/search" || url_without_protocol === "www.bing.com/images/search" || url_without_protocol === "www.bing.com/videos/search" || url_without_protocol === "www.bing.com/map" || url_without_protocol === "www.bing.com/shop" || url_without_protocol === "www.bing.com/news/search") {
+        //Bing results
+        accepted_parameters = ["q", "first", "filters"];
+        required_parameters = {"first": "1"};
+    } else if (url_without_protocol === "www.bing.com/travel/flight-search") {
+        //Bing flight
+        accepted_parameters = ["q", "src", "des", "ddate", "rdate"];
+        required_parameters = {};
+    } else if (url_without_protocol === url_google_type) {
+        //Google
+        accepted_parameters = ["q"];
+        required_parameters = {};
+    } else if (url_wikimedia_type.includes(url_without_protocol)) {
+        //Wikimedia (Wikipedia, Wiktionary, ...)
+        accepted_parameters = ["search", "limit", "offset"];
+        required_parameters = {"offset": "0", "limit": "20"};
+    } else if (url_without_protocol === "github.com/search") {
+        //GitHub
+        accepted_parameters = ["q", "type", "l"];
+        required_parameters = {"type": "repo"};
+    } else if (url_without_protocol === "duckduckgo.com/") {
+        //DuckDuckGo
+        accepted_parameters = ["q", "ia", "df"];
+        required_parameters = {"ia": "web"};
+    }
+
+    if (accepted_parameters.length > 0 && url.split("?").length > 1) {
+        let parametersToUse = "";
+        let parameters = (url.split("?")[1]).split("&");
+        for (let key in required_parameters) {
+            let paramToCheck = key.split("=")[0];
+            if (!paramToCheck.includes(key)) {
+                parameters.push(`${key}=${required_parameters[key]}`);
+            }
+        }
+        parameters.forEach(param => {
+            //console.log(param);
+            let paramToCheck = param.split("=")[0];
+            if (accepted_parameters.includes(paramToCheck)) {
+                if (parametersToUse !== "") parametersToUse += "&";
+                parametersToUse += param
+                //console.log(">> Ok " + param);
+            } else {
+                console.log("!! Removing " + param);
+            }
+        })
+        if (parametersToUse !== "") urlToReturn += "?" + parametersToUse;
+    }
+
+    //console.log("\n-------------\nbefore: " + url);
+    //console.log("after: " + urlToReturn);
     return urlToReturn;
 }
 
 function getTheProtocol(url) {
     return url.split(":")[0];
+}
+
+function getDomain(url, showProtocol = true) {
+    let urlToReturn = "";
+    let protocol = getTheProtocol(url);
+    if (url.includes(":")) {
+        urlParts = url.split(":");
+        urlToReturn = urlParts[1];
+    }
+
+    if (urlToReturn.includes("/")) {
+        urlPartsTemp = urlToReturn.split("/");
+        if (urlPartsTemp[0] === "" && urlPartsTemp[1] === "") {
+            urlToReturn = urlPartsTemp[2];
+        }
+    }
+
+    if (!showProtocol) return urlToReturn;
+    return (protocol + "://" + urlToReturn);
 }
 
 function saveUrlToData(enabled = -1, pos = {x: -1, y: -1}) {

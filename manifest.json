@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Scrolly",
-  "version": "1.0.1",
+  "version": "1.1",
   "author": "Saverio Morelli (Sav22999)",
   "description": "Remember the scroll position of each webpages",
   "icons": {
