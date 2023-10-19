@@ -555,6 +555,7 @@ td {
     font-size: 14px;
     text-align: center;
     border: 1px solid transparent;
+    white-space: pre;
 }
 
 td:first-child {

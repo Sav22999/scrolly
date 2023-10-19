@@ -190,12 +190,12 @@ function loadAllWebsites() {
             let current_website = websites_json_by_domain[index];
 
             let currentWebsiteElement = document.createElement("h2");
-            currentWebsiteElement.textContent = current_website;
+            currentWebsiteElement.textContent = getWebsiteToShow(current_website);
             currentWebsiteElement.classList.add("link", "go-to-external");
             currentWebsiteElement.onclick = function () {
                 browser.tabs.create({url: current_website});
             }
-            currentWebsiteElement.title = currentWebsiteElement.textContent;
+            currentWebsiteElement.title = current_website;
 
             let buttonDelete = document.createElement("input");
             buttonDelete.type = "button";
@@ -297,6 +297,17 @@ function switchToggleOnOff(toggleThumb, current_website, tableDataElement) {
             });
         }
     });
+}
+
+function getWebsiteToShow(website) {
+    let website_to_return = website;
+
+    let length_to_check = website_to_return.length;
+    const length_to_short = 100;
+    if (length_to_check > length_to_short) {
+        website_to_return = website_to_return.substring(0, length_to_short / 2) + "…" + website_to_return.substring(length_to_check - length_to_short / 2, length_to_check);
+    }
+    return website_to_return;
 }
 
 function isEmpty(obj) {
