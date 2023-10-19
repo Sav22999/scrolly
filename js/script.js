@@ -16,6 +16,8 @@ var changedEdits = false;
 const linkReview = ["https://addons.mozilla.org/firefox/addon/scrolly/"]; //{firefox add-ons}
 const linkDonate = ["https://www.paypal.me/saveriomorelli", "https://liberapay.com/Sav22999/donate"]; //{paypal, liberapay}
 
+var unsupported_injection_websites = ["addons.mozilla.org"];
+
 function loaded() {
     browser.tabs.query({active: true, currentWindow: true}, function (tabs) {
         // since only one tab should be active and in the current window at once
@@ -241,7 +243,10 @@ function isUrlSupported(url) {
             //this disable all unsupported website
             valueToReturn = false;//TODO | true->for testing, false->stable release
     }
-    return valueToReturn;
+
+
+    //disable also for unsupported (injection) websites
+    if (unsupported_injection_websites.includes(getShortUrl(url))) valueToReturn = false;
 }
 
 function isInteger(value) {
