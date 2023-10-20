@@ -25,7 +25,7 @@ function load() {
                 from: "scrolling",
                 data: {position: {x: window.scrollX, y: window.scrollY}}
             }).then(() => {
-                //console.log("Scroll");
+                console.log("Scroll");
             });
         });
     }
@@ -34,23 +34,23 @@ function load() {
 function scrollX(x, attemptsX, MAX_ATTEMPTS) {
     window.scrollTo(x, window.scrollY);
     //console.log("Scrolling X - Attempt #" + attemptsX);
-    if (window.scrollX !== x && attemptsX <= MAX_ATTEMPTS) {
+    /*if (window.scrollX !== x && attemptsX <= MAX_ATTEMPTS) {
         setTimeout(function () {
             attemptsX++;
             scrollX(x, attemptsX);
         }, 500 * attemptsX, MAX_ATTEMPTS);
-    }
+    }*/
 }
 
 function scrollY(y, attemptsY, MAX_ATTEMPTS) {
     window.scrollTo(window.scrollX, y);
     //console.log("Scrolling Y - Attempt #" + attemptsY);
-    if (window.scrollY !== y && attemptsY <= MAX_ATTEMPTS) {
+    /*if (window.scrollY !== y && attemptsY <= MAX_ATTEMPTS) {
         setTimeout(function () {
             attemptsY++;
             scrollY(y, attemptsY);
         }, 500 * attemptsY, MAX_ATTEMPTS);
-    }
+    }*/
 }
 
 //INJECTION – END || Scrolly add-on

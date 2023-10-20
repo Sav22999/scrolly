@@ -110,6 +110,8 @@ function tabUpdated() {
             } else if (message["from"] === "popup") {
                 if (message["data"]["enabled"] !== undefined) {
                     saveUrlToData(enabled = message["data"]["enabled"]);
+                    //console.log("new");
+                    tabUpdated();
                 }
             }
         } else if (message["from"] !== undefined && message["ask"] !== undefined) {
@@ -119,14 +121,7 @@ function tabUpdated() {
             }
             if (message["ask"] === "enabled") {
                 sendResponse({"enabled": enabledOrNot});
-            }
-        } else if (message["from"] !== undefined && message["ask"] !== undefined) {
-            //console.log(message);
-            if (message["ask"] === "position") {
-                sendResponse({"position": {x: position.x, y: position.y}});
-            }
-            if (message["ask"] === "enabled") {
-                sendResponse({"enabled": enabledOrNot});
+                //console.log("new");
             }
         }
     });
