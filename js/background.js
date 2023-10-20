@@ -81,6 +81,7 @@ function tabUpdated() {
             if (value["websites"] !== undefined) {
                 websites_json = value["websites"];
                 if (websites_json[getPage(activeTabUrl)] !== undefined && websites_json[getPage(activeTabUrl)]["enabled"]) {
+                    //console.log("injecting")
                     if (all_tabs[activeTabId] === undefined || all_tabs[activeTabId] !== undefined && all_tabs[activeTabId] !== activeTabUrl) {
                         all_tabs[activeTabId] = activeTabUrl;
                         //console.log("Not injected yet!")
@@ -109,6 +110,8 @@ function tabUpdated() {
             } else if (message["from"] === "popup") {
                 if (message["data"]["enabled"] !== undefined) {
                     saveUrlToData(enabled = message["data"]["enabled"]);
+                    //console.log("new");
+                    tabUpdated();
                 }
             }
         } else if (message["from"] !== undefined && message["ask"] !== undefined) {
@@ -118,14 +121,7 @@ function tabUpdated() {
             }
             if (message["ask"] === "enabled") {
                 sendResponse({"enabled": enabledOrNot});
-            }
-        } else if (message["from"] !== undefined && message["ask"] !== undefined) {
-            //console.log(message);
-            if (message["ask"] === "position") {
-                sendResponse({"position": {x: position.x, y: position.y}});
-            }
-            if (message["ask"] === "enabled") {
-                sendResponse({"enabled": enabledOrNot});
+                //console.log("new");
             }
         }
     });
@@ -245,7 +241,7 @@ function getPage(url) {
                 parametersToUse += param
                 //console.log(">> Ok " + param);
             } else {
-                console.log("!! Removing " + param);
+                //console.log("!! Removing " + param);
             }
         })
         if (parametersToUse !== "") urlToReturn += "?" + parametersToUse;
