@@ -4,10 +4,8 @@
     <br>
     <span style="color:#9500FF">Scrolly</span>
     <br>
-    Scrolly
-    <br>
 </h1>
-Official repo of [https://addons.mozilla.org/it/firefox/addon/scrolly/](https://addons.mozilla.org/it/firefox/addon/scrolly/).
+Official repo of https://addons.mozilla.org/it/firefox/addon/scrolly/
 
 [![GitHub release](https://img.shields.io/github/release/Sav22999/scrolly.svg)](https://github.com/Sav22999/scrolly/releases/) [![GitHub license](https://img.shields.io/github/license/Sav22999/scrolly.svg)](https://github.com/Sav22999/scrolly/blob/master/LICENSE) ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 
