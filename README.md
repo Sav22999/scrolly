@@ -1,8 +1,10 @@
 <h1 align="center">
     <br>
-    <img width="70" src="img/icon.svg" alt="Scrolly" />
+    <img width="70" src="img/icon.svg" alt=“Scrolly icon" />
     <br>
     <span style="color:#9500FF">Scrolly</span>
+    <br>
+    Scrolly
     <br>
 </h1>
 Official repo of [https://addons.mozilla.org/it/firefox/addon/scrolly/](https://addons.mozilla.org/it/firefox/addon/scrolly/).
