@@ -3,29 +3,30 @@
 load();
 
 function load() {
+    //console.log("Load scrolling")
+    browser.runtime.sendMessage({from: "scrolling", ask: "position"}).then(result => {
+        browser.runtime.sendMessage({from: "scrolling", ask: "enabled"}).then(result2 => {
+            //console.log(result.position);
+            if (result2.enabled !== undefined && result2.enabled) {
+                if (result.position !== undefined) {
+                    const MAX_ATTEMPTS = 10;
+                    scrollX(result.position.x, 0, MAX_ATTEMPTS);
+                    scrollY(result.position.y, 0, MAX_ATTEMPTS);
+                }
+            }
+        });
+    });
     if (!document.getElementById("scrolly_addon_injected")) {
         let span = document.createElement("span");
         span.id = "scrolly_addon_injected";
         span.style.display = "none";
         document.body.appendChild(span);
-        browser.runtime.sendMessage({from: "scrolling", ask: "position"}).then(result => {
-            browser.runtime.sendMessage({from: "scrolling", ask: "enabled"}).then(result2 => {
-                //console.log(result.position);
-                if (result2.enabled !== undefined && result2.enabled) {
-                    if (result.position !== undefined) {
-                        const MAX_ATTEMPTS = 10;
-                        scrollX(result.position.x, 0, MAX_ATTEMPTS);
-                        scrollY(result.position.y, 0, MAX_ATTEMPTS);
-                    }
-                }
-            });
-        });
         document.addEventListener('scroll', function (e) {
             browser.runtime.sendMessage({
                 from: "scrolling",
                 data: {position: {x: window.scrollX, y: window.scrollY}}
             }).then(() => {
-                console.log("Scroll");
+                //console.log("Scrolling");
             });
         });
     }

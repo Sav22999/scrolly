@@ -82,8 +82,8 @@ function tabUpdated() {
                 websites_json = value["websites"];
                 if (websites_json[getPage(activeTabUrl)] !== undefined && websites_json[getPage(activeTabUrl)]["enabled"]) {
                     //console.log("injecting")
-                    if (all_tabs[activeTabId] === undefined || all_tabs[activeTabId] !== undefined && all_tabs[activeTabId] !== activeTabUrl) {
-                        all_tabs[activeTabId] = activeTabUrl;
+                    //if (all_tabs[activeTabId] === undefined || all_tabs[activeTabId] !== undefined && all_tabs[activeTabId] !== activeTabUrl) {
+                        //all_tabs[activeTabId] = activeTabUrl;
                         //console.log("Not injected yet!")
                         //injection
                         browser.tabs.executeScript(activeTab.id, {file: "./js/inject/scrolling.js"}).then(function () {
@@ -91,9 +91,9 @@ function tabUpdated() {
                         }).catch(function (error) {
                             console.error("E1: Error injection: " + error);
                         });
-                    } else {
+                    //} else {
                         //console.log("Already injected!")
-                    }
+                    //}
                     //console.log(JSON.stringify(all_tabs));
                 }
             }
